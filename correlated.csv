@@ -1,0 +1,5 @@
+"gender","age","mean_cadence","mean_gait_speed","mean_step_length","mean_stride_length","mean_step_width","mean_height","mean_weight","mean_waist"
+"Male",2,6.05,10314.74,22.57,48.16,14.13,93.51,14.94,0.93
+"Male",3,9.75,7628.08,15.09,33.13,10.99,94.79,14.77,0.96
+"Female",2,8.52,9519.85,18.34,40.62,13.44,89.55,13.8,0.97
+"Female",3,7.93,10651.2,20.67,46.12,13.52,91.67,13.59,0.96
