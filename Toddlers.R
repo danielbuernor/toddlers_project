@@ -41,7 +41,7 @@ clean_toddlers$age <- as.integer(round(clean_toddlers$age))
 clean_toddlers$age
 
 ## Variability of anthropometric characteristics among the population
-## 1.What is the mean height, mean weight,  and mean waist cm among the population.  The variable of the means among the genders and age ranges
+## 1.What is the mean height, mean weight,  and mean waist among the population.  The variable of the means among the genders and age ranges
 
 anthropometric_characteristics <- clean_toddlers %>%
   group_by(gender, age) %>%
@@ -66,8 +66,8 @@ spatial_parameter_variability <- clean_toddlers %>%
 temporal_paramer_variations <- clean_toddlers %>%
   group_by(gender, age) %>%
   summarise(
-    mean_cadence = round(mean(cadence),2),
-    mean_gait_speed = round(mean(gait_speed), 2)
+    mean_cadence = round(mean(`cadence_steps/ 30 secs`),2),
+    mean_gait_speed = round(mean(`gait_speed_m/30 secs`), 2)
   )
 ## Correlation between the anthropometric characteristics (that is height weight and waist  measurement ) and their spatial parameters ( step length, stride length, step width)
 ## first, we will create a table for all mean values called correlated
@@ -79,59 +79,13 @@ correlated <- temporal_paramer_variations %>%
 
 # Calculating the correlation matrix between anthropometric characteristics and spatial parameters
 correlation_matrix <- round(cor(correlated[, c("mean_height", "mean_weight", "mean_waist", "mean_step_length", "mean_stride_length", "mean_step_width")]),2)
-width <- 800
-height <- 800
-png("correlation_plot.png", width = width, height = height)
-corrplot(correlation_matrix, method = "color", type = "upper", tl.col = "black", tl.srt = 45, tl.cex = 1.5)
-dev.off()  # Close the PNG deviceprint(correlation_matrix)
+
+corrplot(correlation_matrix, method = "number", type = "upper", tl.cex = 0.8)
 
 ## correlation of temporal parameter (cadence and gait speed)  to the anthropometric measure (height , weight and weight)
 correlation_mat <- round(cor(correlated[, c("mean_cadence", "mean_gait_speed", "mean_height", "mean_weight", "mean_waist")]),2)
-corrplot(correlation_mat, method = "color", type = "upper", tl.col = "black", tl.srt = 45)
+corrplot(correlation_mat, method = "number", type = "upper", tl.col = "black", tl.cex = 0.8)
 
-## WHAT ARE THE TEMPORAL PARAMETERS AMONG TYPICALLY DEVELOPING TODDLER GAIT
-## We will calculate the stride time in seconds
-clean_toddlers$stride_time <- clean_toddlers$step_length_cm / clean_toddlers$stride_length_cm
-clean_toddlers$stride_time
-
-# we will calculate Gait Speed (in meters per second)
-clean_toddlers$gait_speed <- clean_toddlers$stride_length_cm / (clean_toddlers$stride_time/100)
-
-# Calculate Cadence (in steps per minute)
-clean_toddlers$cadence <- clean_toddlers$stride_length_cm / clean_toddlers$step_length_cm * (60 / clean_toddlers$step_length_cm)
-# Summary statistics for Gait Speed and Cadence
-gait_speed_summary <- summarise(clean_toddlers, Mean_Gait_Speed = mean(gait_speed), SD_Gait_Speed = sd(gait_speed))
-cadence_summary <- summarise(clean_toddlers, Mean_Cadence = mean(cadence), SD_Cadence = sd(cadence))
-
-# Print the results
-print("Gait Speed:")
-print(gait_speed_summary$Mean_Gait_Speed)
-print(gait_speed_summary$SD_Gait_Speed)
-
-print("Cadence:")
-print(cadence_summary$Mean_Cadence)
-print(cadence_summary$SD_Cadence)
-
-## Now we can answer the question as follows:
-
- ##Gait Speed: Mean Gait Speed: [Mean_Gait_Speed value] meters per second. Standard Deviation of Gait Speed: [SD_Gait_Speed value] meters per second
-
- ##Cadence: Mean Cadence: [Mean_Cadence value] steps per minute. Standard Deviation of Cadence: [SD_Cadence value] steps per minute
-
-
-# Summary statistics for height, weight, and waist-hip ratio
-height_summary <- summarise(clean_toddlers, Mean_Height = mean(height_cm), SD_Height = sd(height_cm))
-weight_summary <- summarise(clean_toddlers, Mean_Weight = mean(weight_kg), SD_Weight = sd(weight_kg))
-##whr_summary <- summarise(data, Mean_WHR = mean(waist_cm / hip_cm), SD_WHR = sd(waist_cm / hip_cm))
-
-# Print the results
-print("Height:")
-print(height_summary$Mean_Height)
-print(height_summary$SD_Height)
-
-print("Weight:")
-print(weight_summary$Mean_Weight)
-print(weight_summary$SD_Weight)
 
 ## uploading dataframe to google drive
 install.packages("googledrive")
